@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// מודל המוצרים
+model Product {
+  id            String          @id @default(uuid())
+  name          String
+  category      String
+  description   String?
+  image         String?
+  selectionType String          // "size", "fixed", "min_quantity", "presets"
+  minQuantity   Int?
+  basePrice     Float?
+  isActive      Boolean         @default(true) // שדה מחיקה רכה / הפעלה וכיבוי
+  options       ProductOption[]
+  orderItems    OrderItem[]
+  createdAt     DateTime        @default(now())
+}
+
+// אפשרויות/גדלים של מוצר
+model ProductOption {
+  id         String      @id @default(uuid())
+  name       String      // "קוטר 20", "קטן", וכו'
+  price      Float
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+}
+
+// מודל ההזמנה הראשית
+model Order {
+  id              String      @id @default(uuid())
+  
+  // פרטי המזמין
+  customerName    String
+  customerPhone   String
+  
+  // מועד וסוג קבלה
+  deliveryType    String      // "pickup" (איסוף) או "delivery" (משלוח)
+  deliveryAddress String?     // כתובת (חובה רק אם נבחר משלוח)
+  deliveryDate    String      // יום ההזמנה
+  deliveryTime    String      // שעת ההזמנה
+  
+  // אפשרות: "ההזמנה לא בשבילי" (מתנה)
+  isGift          Boolean     @default(false)
+  recipientName   String?
+  recipientPhone  String?
+  recipientAddress String?
+  greetingCard     String?     // תוכן הברכה (אם הלקוח בחר לצרף)
+  notes           String?     // הערות מיוחדות להזמנה
+  totalAmount     Float       // סך הכל לתשלום
+  status          String      @default("ממתין לתשלום") // סטטוס לניהול שלך
+  
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+}
+
+// פריטים בתוך הזמנה
+model OrderItem {
+  id              String         @id @default(uuid())
+  orderId         String
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productId       String
+  product         Product        @relation(fields: [productId], references: [id])
+  
+  productOptionId String?
+  productOption   ProductOption? @relation(fields: [productOptionId], references: [id])
+  
+  quantity        Int            // כמות
+  unitPrice       Float          // המחיר ליחידה ברגע ההזמנה
+  totalPrice      Float          // סה"כ לפריט (כמות * מחיר ליחידה)
+}
+
+model BlockedDate {
+  id        String   @id @default(uuid())
+  date      String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
