@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+# מתי התהליך מופעל אוטומטית
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # הרצה על גבי מערכת Linux כנדרש
+
+    steps:
+      # 1. משיכת הקוד מהמאגר
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. התקנת סביבת Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. התקנת התלויות של הפרויקט
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. הרצת בדיקות אוטומטיות (Unit Tests)
+      - name: Run automated tests
+        run: npm test --if-present
+
+      # 5. בדיקת בנייה (Build) לווידוא שהקוד עובר קומפילציה
+      - name: Build project
+        run: npm run build --if-present
