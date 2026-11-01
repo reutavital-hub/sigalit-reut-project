@@ -20,7 +20,7 @@ export default function ProductCard({ product, onSelectProduct }) {
     }}>
       {/* תמונה */}
       <div style={{
-        height: '180px',
+        height: '240px',
         backgroundColor: '#e5e7eb',
         display: 'flex',
         alignItems: 'center',
