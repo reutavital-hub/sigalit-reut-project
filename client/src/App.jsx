@@ -6,6 +6,7 @@ import CartDrawer from './components/CartDrawer';
 import { Clock, ShoppingBag, MapPin, MessageCircle, ArrowDown } from 'lucide-react';
 import CheckoutModal from './components/CheckoutModal';
 import AdminDashboard from './components/AdminDashboard';
+import AdminLoginModal from './components/AdminLoginModal';
 
 const CATEGORIES = [
   'הכל',
@@ -26,9 +27,10 @@ export default function App() {
   const [error, setError] = useState(null);
   const [selectedProductForModal, setSelectedProductForModal] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
-const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const menuRef = useRef(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/products')
@@ -72,60 +74,62 @@ const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     setCart(prev => prev.filter((_, i) => i !== index));
   };
 
-  // const filteredProducts = selectedCategory === 'הכל'
-  //   ? products
-  //   : products.filter(p => p.category === selectedCategory);
+  // בדיקת טוקן בלחיצה על כפתור ניהול
+  const handleAdminButtonClick = () => {
+    const token = localStorage.getItem('adminToken');
 
-// דירוג עדיפות לקטגוריות בתצוגת "הכל" (מספר נמוך יותר = יופיע למעלה יותר)
-const CATEGORY_PRIORITY = {
-  'מארזים מתוקים': 1,
-  'מארזים מלוחים': 2,
-  'עוגות עגולות': 3,
-  'עוגות פס': 4,
-  'עוגיות': 5,
-  'מאפים מלוחים וסלטים': 6,
-  'לחמים וממרחים': 7
-};
-
-// פונקציית עזר למיון פנימי בתוך "לחמים וממרחים"
-const getBreadPriority = (productName) => {
-  const name = productName.toLowerCase();
-  // ממרחים - יופיעו אחרונים
-  if (name.includes('ממרח') || name.includes('טחינה') || name.includes('טפנד') || name.includes('שמנת')) {
-    return 3;
-  }
-  // חלות - יופיעו באמצע (אחרי הלחמים המיוחדים)
-  if (name.includes('חלה') || name.includes('חלת')) {
-    return 2;
-  }
-  // לחמים מיוחדים, לחמניות, פרעצלס - יופיעו ראשונים
-  return 1;
-};
-
-// סינון ומיון המוצרים המוצגים
-const filteredProducts = [...products]
-  .filter(p => selectedCategory === 'הכל' || p.category === selectedCategory)
-  .sort((a, b) => {
-    // 1. מיון ספציפי עבור קטגוריית "לחמים וממרחים"
-    if (a.category === 'לחמים וממרחים' && b.category === 'לחמים וממרחים') {
-      const priorityA = getBreadPriority(a.name);
-      const priorityB = getBreadPriority(b.name);
-      if (priorityA !== priorityB) {
-        return priorityA - priorityB;
-      }
+    if (token) {
+      // אם כבר קיים טוקן מאומת - פותח ישר את חלון הניהול
+      setIsAdminOpen(true);
+    } else {
+      // אם אין טוקן - פותח את חלון הסיסמה
+      setIsLoginModalOpen(true);
     }
+  };
 
-    // 2. מיון תצוגת "הכל" לפי סדר האטרקטיביות של הקטגוריות
-    if (selectedCategory === 'הכל') {
-      const catA = CATEGORY_PRIORITY[a.category] || 99;
-      const catB = CATEGORY_PRIORITY[b.category] || 99;
-      if (catA !== catB) {
-        return catA - catB;
-      }
+  // דירוג עדיפות לקטגוריות בתצוגת "הכל"
+  const CATEGORY_PRIORITY = {
+    'מארזים מתוקים': 1,
+    'מארזים מלוחים': 2,
+    'עוגות עגולות': 3,
+    'עוגות פס': 4,
+    'עוגיות': 5,
+    'מאפים מלוחים וסלטים': 6,
+    'לחמים וממרחים': 7
+  };
+
+  const getBreadPriority = (productName) => {
+    const name = productName.toLowerCase();
+    if (name.includes('ממרח') || name.includes('טחינה') || name.includes('טפנד') || name.includes('שמנת')) {
+      return 3;
     }
+    if (name.includes('חלה') || name.includes('חלת')) {
+      return 2;
+    }
+    return 1;
+  };
 
-    return 0; // שמירה על הסדר הקיים אם העדיפות זהה
-  });
+  const filteredProducts = [...products]
+    .filter(p => selectedCategory === 'הכל' || p.category === selectedCategory)
+    .sort((a, b) => {
+      if (a.category === 'לחמים וממרחים' && b.category === 'לחמים וממרחים') {
+        const priorityA = getBreadPriority(a.name);
+        const priorityB = getBreadPriority(b.name);
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+      }
+
+      if (selectedCategory === 'הכל') {
+        const catA = CATEGORY_PRIORITY[a.category] || 99;
+        const catB = CATEGORY_PRIORITY[b.category] || 99;
+        if (catA !== catB) {
+          return catA - catB;
+        }
+      }
+
+      return 0;
+    });
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
@@ -425,21 +429,22 @@ const filteredProducts = [...products]
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={() => {
-    setIsCartOpen(false);      // סוגר את עגלת הקניות
-    setIsCheckoutOpen(true);    // פותח את טופס מילוי הפרטים
-    }}
+          setIsCartOpen(false);
+          setIsCheckoutOpen(true);
+        }}
       />
 
-<CheckoutModal
-  isOpen={isCheckoutOpen}
-  onClose={() => setIsCheckoutOpen(false)}
-  cart={cart}
-  totalAmount={totalAmount}
-  onOrderSuccess={(orderData) => {
-    alert('ההזמנה נקלטה בהצלחה! שלחנו את הפרטים לוואטסאפ.');
-    setCart([]); // איפוס הסל
-  }}
-/>
+      {/* מודל תשלום ופרטים */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cart={cart}
+        totalAmount={totalAmount}
+        onOrderSuccess={(orderData) => {
+          alert('ההזמנה נקלטה בהצלחה! שלחנו את הפרטים לוואטסאפ.');
+          setCart([]);
+        }}
+      />
 
       {/* 6. פוטר */}
       <footer style={{
@@ -461,9 +466,6 @@ const filteredProducts = [...products]
             <h4 className="font-title" style={{ margin: '0 0 0.25rem 0', fontSize: '1.2rem', color: 'var(--primary-teal)' }}>
               רעות אביטל | מתוק מלוח ומה שביניהם
             </h4>
-            {/* <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              איסוף עצמי מלוד | משלוחים בתיאום מראש
-            </p> */}
           </div>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
             <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>להזמנות ובירורים מיוחדים:</span>
@@ -482,9 +484,11 @@ const filteredProducts = [...products]
               <MessageCircle size={20} />
               וואטסאפ
             </a>
+            
+            {/* כפתור הניהול המתוקן */}
             <button
               type="button"
-              onClick={() => setIsAdminOpen(true)}
+              onClick={handleAdminButtonClick}
               style={{
                 background: 'none',
                 border: '1px dashed var(--border-color)',
@@ -502,6 +506,17 @@ const filteredProducts = [...products]
           </div>
         </div>
       </footer>
+
+      {/* חלון התחברות מנהלת */}
+      <AdminLoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={() => {
+          setIsLoginModalOpen(false);
+          setIsAdminOpen(true);
+        }}
+      />
+
       {/* מודל הדשבורד של האדמין */}
       <AdminDashboard isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </div>
