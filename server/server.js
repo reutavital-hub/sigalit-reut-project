@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const morgan = require('morgan');
+const logger = require('./logs/logger');
+
 const prisma = require('./prismaClient');
 const authRouter = require('./routes/auth');
 const verifyAdmin = require('./middleware/authMiddleware'); // Middleware לאימות טוקן
@@ -12,6 +15,13 @@ const PORT = process.env.PORT || 5000;
 // Middleware כללי - בסדר הנכון
 app.use(cors());
 app.use(express.json());
+
+// HTTP request logging with Morgan and Winston
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
 
 // נתיבי אימות (Auth)
 app.use('/api/admin', authRouter);
@@ -40,7 +50,7 @@ app.get('/api/products', async (req, res) => {
     });
     res.json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
+    logger.error('Error fetching products', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בשליפת המוצרים' });
   }
 });
@@ -77,7 +87,7 @@ app.post('/api/products', verifyAdmin, async (req, res) => {
 
     res.status(201).json(newProduct);
   } catch (error) {
-    console.error('Error creating product:', error);
+    logger.error('Error creating product', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה ביצירת מוצר חדש' });
   }
 });
@@ -94,7 +104,7 @@ app.delete('/api/products/:id', verifyAdmin, async (req, res) => {
 
     res.json({ message: 'המוצר הושבת בהצלחה מהתפריט', product: deactivatedProduct });
   } catch (error) {
-    console.error('Error deactivating product:', error);
+    logger.error('Error deactivating product', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בהשבתת המוצר' });
   }
 });
@@ -111,7 +121,7 @@ app.patch('/api/products/:id/restore', verifyAdmin, async (req, res) => {
 
     res.json({ message: 'המוצר הוחזר לתפריט בהצלחה', product: restoredProduct });
   } catch (error) {
-    console.error('Error restoring product:', error);
+    logger.error('Error restoring product', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בשחזור המוצר' });
   }
 });
@@ -126,7 +136,7 @@ app.get('/api/blocked-dates', async (req, res) => {
     });
     res.json(dates);
   } catch (error) {
-    console.error('Error fetching blocked dates:', error);
+    logger.error('Error fetching blocked dates', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בטעינת תאריכים חסומים' });
   }
 });
@@ -222,7 +232,7 @@ app.post('/api/orders', async (req, res) => {
       order: newOrder
     });
   } catch (error) {
-    console.error('Error creating order:', error);
+    logger.error('Error creating order', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה ביצירת ההזמנה' });
   }
 });
@@ -245,7 +255,7 @@ app.get('/api/orders', verifyAdmin, async (req, res) => {
     });
     res.json(orders);
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    logger.error('Error fetching orders', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בשליפת ההזמנות' });
   }
 });
@@ -261,7 +271,7 @@ app.patch('/api/orders/:id/status', verifyAdmin, async (req, res) => {
     });
     res.json(updated);
   } catch (error) {
-    console.error('Error updating status:', error);
+    logger.error('Error updating status', { error: error.message, stack: error.stack });
     res.status(500).json({ error: 'שגיאה בעדכון הסטטוס' });
   }
 });
@@ -270,7 +280,7 @@ app.patch('/api/orders/:id/status', verifyAdmin, async (req, res) => {
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    logger.info(`Server is running on port ${PORT}`);
   });
 }
 
