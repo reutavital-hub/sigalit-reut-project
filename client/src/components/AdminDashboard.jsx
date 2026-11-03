@@ -419,6 +419,23 @@ openWhatsApp(ord, `שלום ${ord.customerName}, ההזמנה שלך מרעות 
 
   // מסננים החוצה הזמנות שסומנו גם כשולמו וגם כמוכנות
   const activeOrders = orders.filter(ord => ord.status !== 'הושלם ושולם');
+  const sendWhatsAppToCustomer = (phone, customerName) => {
+  if (!phone) {
+    alert('לא קיים מספר טלפון להזמנה זו');
+    return;
+  }
+
+  // המרה למבנה בינלאומי תקין
+  const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '972');
+
+  const messageText = 
+`שלום ${customerName},
+ההזמנה שלך מוכנה לאיסוף!
+מחכים לך :)`;
+
+  const encodedMessage = encodeURIComponent(messageText);
+  window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
+};
 
   return (
     <div style={{
