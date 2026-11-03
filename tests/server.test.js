@@ -13,7 +13,19 @@ jest.mock("../server/prismaClient", () => ({
 }));
 
 const prisma = require("../server/prismaClient");
+
+process.env.ADMIN_USERNAME = "test-admin";
+process.env.ADMIN_PASSWORD_HASH = "test-hash";
+process.env.JWT_SECRET = "test-secret";
+
+const jwt = require("jsonwebtoken");
 const app = require("../server/server");
+
+const adminToken = jwt.sign(
+  { username: "test-admin", role: "admin" },
+  process.env.JWT_SECRET,
+  { expiresIn: "1h" },
+);
 
 describe("Server tests", () => {
   beforeEach(() => {
@@ -68,11 +80,14 @@ describe("Server tests", () => {
 
     prisma.product.create.mockResolvedValue(mockNewProduct);
 
-    const response = await request(app).post("/api/products").send({
-      name: "Chocolate Cake",
-      category: "Cakes",
-      selectionType: "single",
-    });
+    const response = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({
+        name: "Chocolate Cake",
+        category: "Cakes",
+        selectionType: "single",
+      });
 
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual(mockNewProduct);
@@ -80,9 +95,12 @@ describe("Server tests", () => {
   });
 
   test("POST /api/products should return 400 when required fields are missing", async () => {
-    const response = await request(app).post("/api/products").send({
-      name: "Chocolate Cake",
-    });
+    const response = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({
+        name: "Chocolate Cake",
+      });
 
     expect(response.statusCode).toBe(400);
 
@@ -102,7 +120,9 @@ describe("Server tests", () => {
 
     prisma.product.update.mockResolvedValue(deactivatedProduct);
 
-    const response = await request(app).delete("/api/products/123");
+    const response = await request(app)
+      .delete("/api/products/123")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.product).toEqual(deactivatedProduct);
@@ -121,7 +141,9 @@ describe("Server tests", () => {
 
     prisma.product.update.mockResolvedValue(restoredProduct);
 
-    const response = await request(app).patch("/api/products/123/restore");
+    const response = await request(app)
+      .patch("/api/products/123/restore")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body.product).toEqual(restoredProduct);
@@ -153,7 +175,9 @@ describe("Server tests", () => {
 
     prisma.order.findMany.mockResolvedValue(mockOrders);
 
-    const response = await request(app).get("/api/orders");
+    const response = await request(app)
+      .get("/api/orders")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockOrders);
@@ -176,7 +200,9 @@ describe("Server tests", () => {
   test("GET /api/orders should return 500 when database fails", async () => {
     prisma.order.findMany.mockRejectedValue(new Error("Database error"));
 
-    const response = await request(app).get("/api/orders");
+    const response = await request(app)
+      .get("/api/orders")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(response.status).toBe(500);
     expect(response.body).toEqual({
@@ -185,40 +211,37 @@ describe("Server tests", () => {
   });
 
   test("POST /api/orders should create a new order", async () => {
-  const orderPayload = {
-    customerName: "Test Customer",
-    customerPhone: "0501234567",
-    deliveryType: "pickup",
-    deliveryDate: "2026-11-01",
-    deliveryTime: "10:00",
-    isGift: false,
-    totalAmount: 100,
-    items: [
-      {
-        productId: "product-1",
-        productOptionId: null,
-        quantity: 2,
-        unitPrice: 50,
-      },
-    ],
-  };
+    const orderPayload = {
+      customerName: "Test Customer",
+      customerPhone: "0501234567",
+      deliveryType: "pickup",
+      deliveryDate: "2026-11-01",
+      deliveryTime: "10:00",
+      isGift: false,
+      totalAmount: 100,
+      items: [
+        {
+          productId: "product-1",
+          productOptionId: null,
+          quantity: 2,
+          unitPrice: 50,
+        },
+      ],
+    };
 
-  const createdOrder = {
-    id: "order-1",
-    ...orderPayload,
-  };
+    const createdOrder = {
+      id: "order-1",
+      ...orderPayload,
+    };
 
-  prisma.order.create.mockResolvedValue(createdOrder);
+    prisma.order.create.mockResolvedValue(createdOrder);
 
-  const response = await request(app)
-    .post("/api/orders")
-    .send(orderPayload);
+    const response = await request(app).post("/api/orders").send(orderPayload);
 
-  expect(response.status).toBe(201);
-  expect(response.body.message).toBe("ההזמנה נוצרה בהצלחה");
-  expect(response.body.order).toEqual(createdOrder);
+    expect(response.status).toBe(201);
+    expect(response.body.message).toBe("ההזמנה נוצרה בהצלחה");
+    expect(response.body.order).toEqual(createdOrder);
 
-  expect(prisma.order.create).toHaveBeenCalled();
-});
-
+    expect(prisma.order.create).toHaveBeenCalled();
+  });
 });
