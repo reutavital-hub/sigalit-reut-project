@@ -84,6 +84,24 @@ export default function AdminDashboard({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
+  const sendWhatsAppToCustomer = (phone, customerName) => {
+  if (!phone) {
+    alert('לא קיים מספר טלפון להזמנה זו');
+    return;
+  }
+
+  // המרה למבנה בינלאומי תקין
+  const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '972');
+
+  const messageText = 
+`שלום ${customerName},
+ההזמנה שלך מוכנה לאיסוף!
+מחכים לך :)`;
+
+  const encodedMessage = encodeURIComponent(messageText);
+  window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
+};
+
   return (
     <div style={{
       position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)',

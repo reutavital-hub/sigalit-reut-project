@@ -313,6 +313,122 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
+// שליפת הזמנות: ברירת מחדל הזמנות פתוחות, או ?status=completed להזמנות עבר
+app.get('/api/orders', async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    let whereClause = {};
+    if (status === 'completed') {
+      // הזמנות שהושלמו: גם שולם וגם מוכן
+      whereClause = { isReady: true, isPaid: true };
+    } else {
+      // הזמנות פתוחות: לפחות אחד מהם עדיין לא סומן
+      whereClause = {
+        OR: [
+          { isReady: false },
+          { isPaid: false }
+        ]
+      };
+    }
+
+    const orders = await prisma.order.findMany({
+      where: whereClause,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(orders);
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ error: 'שגיאה בטעינת ההזמנות' });
+  }
+});
+
+// עדכון סטטוס מוכן / שולם
+app.patch('/api/orders/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isReady, isPaid } = req.body;
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: parseInt(id) },
+      data: {
+        ...(isReady !== undefined && { isReady }),
+        ...(isPaid !== undefined && { isPaid })
+      }
+    });
+
+    res.json(updatedOrder);
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ error: 'שגיאה בעדכון הסטטוס' });
+  }
+});
+
+// פונקציה לעדכון הסטטוס בשרת
+const handleStatusUpdate = async (orderId, field, currentValue) => {
+  try {
+    const response = await fetch(`/api/orders/${orderId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ [field]: !currentValue }),
+    });
+
+    if (response.ok) {
+      // עדכון ה-State המקומי כדי שהשינוי ישתקף מיד במסך
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId ? { ...order, [field]: !currentValue } : order
+        )
+      );
+    }
+  } catch (error) {
+    console.error('שגיאה בעדכון ההזמנה:', error);
+  }
+};
+
+// תצוגת הכפתורים/צ'קבוקסים בתוך שורת ההזמנה בטבלה
+<div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+  {/* כפתור/סימון מוכן */}
+  <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+    <input
+      type="checkbox"
+      checked={order.isReady}
+      onChange={() => handleStatusUpdate(order.id, 'isReady', order.isReady)}
+    />
+    <span>הזמנה מוכנה</span>
+  </label>
+
+  {/* כפתור/סימון שולם */}
+  <label style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+    <input
+      type="checkbox"
+      checked={order.isPaid}
+      onChange={() => handleStatusUpdate(order.id, 'isPaid', order.isPaid)}
+    />
+    <span>שולם</span>
+  </label>
+
+  {/* כפתור שליחת וואטסאפ (זמין ברגע שההזמנה מוכנה) */}
+  {order.isReady && (
+    <button
+      onClick={() => sendWhatsAppNotification(order.phone, order.customerName)}
+      style={{
+        backgroundColor: '#25D366',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        padding: '6px 10px',
+        cursor: 'pointer',
+      }}
+    >
+      שלח הודעת וואטסאפ
+    </button>
+  )}
+</div>
+
 // הפעלת השרת
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

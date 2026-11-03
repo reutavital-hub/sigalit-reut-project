@@ -84,3 +84,17 @@ model BlockedDate {
   reason    String?
   createdAt DateTime @default(now())
 }
+
+// מנהל הזמנות בדף ניהול
+model Order {
+  id           Int      @id @default(autoincrement())
+  customerName String
+  phone        String
+  items        Json     // מכיל מערך של פריטים, כמויות ומחירים
+  totalPrice   Float
+  notes        String?  // הערות להזמנה (אם יש)
+  isReady      Boolean  @default(false)
+  isPaid       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -21,6 +21,18 @@
 }
 
 body {
+  /* background-image: url('/web_wallpaper1.jpg');
+  background-repeat: repeat;
+  background-size: 450px; /* קובע כמה האיורים יהיו גדולים או קטנים */
+  /* background-attachment: fixed; שומר על הרקע במקום בזמן שגוללים */ 
+
+  background-image: url('/web_wallpaper1.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-color: var(--bg-cream);
+
   margin: 0;
   font-family: 'Alef', system-ui, sans-serif;
   background-color: var(--bg-cream);
