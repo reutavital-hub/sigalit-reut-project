@@ -10,6 +10,8 @@ services:
       - ./server/.env
     environment:
       PORT: 5000
+    volumes:
+      - ./server/logs:/app/server/logs
 
   client:
     build:
