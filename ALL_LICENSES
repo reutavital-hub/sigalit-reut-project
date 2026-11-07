@@ -1,0 +1,47 @@
+
+THIRD-PARTY OPEN SOURCE LIBRARIES & LICENSES
+
+
+Client Dependencies (client/package.json)
+1. react (v18.x) - MIT License
+   https://github.com/facebook/react
+2. react-dom (v18.x) - MIT License
+   https://github.com/facebook/react
+3. @tanstack/react-table (v8.x) - MIT License
+   (Used for Products Management Data Table)
+   https://github.com/TanStack/table
+4. lucide-react - ISC License
+   (Used for UI icons)
+   https://github.com/lucide-icons/lucide
+5. vite - MIT License
+   https://github.com/vitejs/vite
+6. @vitejs/plugin-react - MIT License
+   https://github.com/vitejs/vite-plugin-react
+
+Server Dependencies (server/package.json)
+1. express - MIT License
+   https://github.com/expressjs/express
+2. jsonwebtoken - MIT License
+   https://github.com/auth0/node-jsonwebtoken
+3. bcrypt / bcryptjs - MIT License
+   (Used for Admin password hashing)
+   https://github.com/kelektiv/node.bcrypt.js
+4. cors - MIT License
+   https://github.com/expressjs/cors
+5. dotenv - BSD-2-Clause License
+   https://github.com/motdotla/dotenv
+6. winston - MIT License
+   https://github.com/winstonjs/winston
+7. morgan - MIT License
+   https://github.com/expressjs/morgan
+8. jest - MIT License
+   https://github.com/jestjs/jest
+9. supertest - MIT License
+   https://github.com/ladjs/supertest
+10. nodemon - MIT License
+    https://github.com/remy/nodemon
+
+
+NOTE ON LICENSES:
+All libraries listed above are open-source and free for commercial and 
+educational use under the permissive MIT, ISC, and BSD-2-Clause licenses.

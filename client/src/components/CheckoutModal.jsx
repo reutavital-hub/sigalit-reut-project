@@ -162,7 +162,7 @@ const calculatedTotal = cart.reduce((sum, it) => {
         const itemPrice = Number(it.unitPrice ?? it.price ?? it.selectedOption?.price ?? it.basePrice ?? 0);
         return {
           productId: it.productId || it.id,
-          productOptionId: it.productOptionId || (typeof it.selectedOption === 'object' ? it.selectedOption?.id : null),
+          productOptionId: it.productOptionId || null,
           quantity: Number(it.quantity) || 1,
           unitPrice: itemPrice
         };
