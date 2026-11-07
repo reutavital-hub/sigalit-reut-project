@@ -1,35 +1,42 @@
+
 const jwt = require('jsonwebtoken');
 
 // שליפת המפתח הסודי מקובץ ה-.env
 const JWT_SECRET = process.env.JWT_SECRET;
 
 function verifyAdmin(req, res, next) {
-  // 1. שליפת כותרת ה-Authorization מהבקשה
-  const authHeader = req.headers['authorization'];
-  
-  // הכותרת מגיעה בפורמט: "Bearer <TOKEN>"
-  const token = authHeader && authHeader.split(' ')[1];
+  // בדיקה שקיים מפתח סודי
+  if (!JWT_SECRET) {
+    console.error('[AUTH ERROR] JWT_SECRET is missing');
+    return res.status(500).json({ error: 'שגיאת הגדרות שרת' });
+  }
 
-  // 2. בדיקה האם הטוקן בכלל נשלח
+  // שליפת כותרת Authorization
+  const authHeader = req.headers['authorization'];
+
+  // בדיקה שהכותרת קיימת ובפורמט Bearer
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'גישה נדחתה: לא סופק טוקן התחברות תקין' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
   if (!token) {
     return res.status(401).json({ error: 'גישה נדחתה: לא סופק טוקן התחברות' });
   }
 
-  // 3. אימות הטוקן מול המפתח הסודי
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+  // אימות הטוקן עם האלגוריתם המורשה בלבד
+  jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }, (err, decoded) => {
     if (err) {
       return res.status(403).json({ error: 'טוקן לא תקין או שפג תוקפו' });
     }
 
-    // 4. וידוא שלמשתמש יש אכן תפקיד מנהל (admin)
-    if (decoded.role !== 'admin') {
+    // בדיקה שהמידע המפוענח תקין ושהמשתמש הוא מנהל
+    if (!decoded || decoded.role !== 'admin') {
       return res.status(403).json({ error: 'גישה נדחתה: אין לך הרשאות ניהול' });
     }
 
-    // שמירת פרטי המנהל על הבקשה למקרה שנצטרך אותם בהמשך
     req.admin = decoded;
-    
-    // מעבר לפונקציה הבאה (ביצוע הפעולה המבוקשת)
     next();
   });
 }

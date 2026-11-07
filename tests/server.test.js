@@ -32,6 +32,22 @@ describe("Server tests", () => {
     jest.clearAllMocks();
   });
 
+  test("POST /api/admin/login should block after 5 attempts", async () => {
+    const responses = [];
+
+    for (let i = 0; i < 6; i++) {
+      const response = await request(app).post("/api/admin/login").send({
+        username: "wrong-user",
+        password: "wrong-password",
+      });
+
+      responses.push(response.statusCode);
+    }
+
+    expect(responses.slice(0, 5)).toEqual([401, 401, 401, 401, 401]);
+    expect(responses[5]).toBe(429);
+  });
+
   test("GET / should return server status", async () => {
     const response = await request(app).get("/");
 
@@ -56,6 +72,48 @@ describe("Server tests", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual(mockProducts);
     expect(prisma.product.findMany).toHaveBeenCalled();
+  });
+
+  test("POST /api/products should return 401 without token", async () => {
+    const response = await request(app).post("/api/products").send({
+      name: "Chocolate Cake",
+      category: "Cakes",
+      selectionType: "single",
+    });
+
+    expect(response.statusCode).toBe(401);
+  });
+
+  test("POST /api/products should return 403 with invalid token", async () => {
+    const response = await request(app)
+      .post("/api/products")
+      .set("Authorization", "Bearer invalid-token")
+      .send({
+        name: "Chocolate Cake",
+        category: "Cakes",
+        selectionType: "single",
+      });
+
+    expect(response.statusCode).toBe(403);
+  });
+
+  test("POST /api/products should return 403 for non-admin user", async () => {
+    const userToken = jwt.sign(
+      { username: "test-user", role: "user" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" },
+    );
+
+    const response = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({
+        name: "Chocolate Cake",
+        category: "Cakes",
+        selectionType: "single",
+      });
+
+    expect(response.statusCode).toBe(403);
   });
 
   test("GET /api/products should return 500 when database fails", async () => {
