@@ -1,38 +1,54 @@
+const winston = require("winston");
+const path = require("path");
+const fs = require("fs");
+const DailyRotateFile = require("winston-daily-rotate-file");
 
-const winston = require('winston');
-const path = require('path');
+// יצירת תיקיית הלוגים אם היא אינה קיימת
+fs.mkdirSync(__dirname, { recursive: true });
 
 const logger = winston.createLogger({
-    level: 'info',
+  level: "info",
 
-    format: winston.format.combine(
-        winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        }),
-        winston.format.errors({ stack: true }),
-        winston.format.json()
-    ),
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss",
+    }),
+    winston.format.errors({ stack: true }),
+    winston.format.json(),
+  ),
 
-    transports: [
-        new winston.transports.File({
-            filename: path.join(__dirname, 'combined.log')
-        }),
+  transports: [
+    // לוג כללי: info, warn ו-error
+    new DailyRotateFile({
+      filename: path.join(__dirname, "combined-%DATE%.log"),
+      datePattern: "YYYY-MM-DD",
+      maxSize: "10m",
+      maxFiles: "14d",
+      zippedArchive: true,
+    }),
 
-        new winston.transports.File({
-            filename: path.join(__dirname, 'error.log'),
-            level: 'error'
-        })
-    ]
+    // לוג שגיאות בלבד
+    new DailyRotateFile({
+      filename: path.join(__dirname, "error-%DATE%.log"),
+      datePattern: "YYYY-MM-DD",
+      level: "error",
+      maxSize: "10m",
+      maxFiles: "14d",
+      zippedArchive: true,
+    }),
+  ],
 });
 
 // הצגת לוגים גם בטרמינל בזמן פיתוח
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        )
-    }));
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple(),
+      ),
+    }),
+  );
 }
 
 module.exports = logger;
