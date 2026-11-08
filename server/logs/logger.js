@@ -1,6 +1,10 @@
 
 const winston = require('winston');
 const path = require('path');
+const fs = require('fs');
+
+// יצירת תיקיית הלוגים אם היא אינה קיימת
+fs.mkdirSync(__dirname, { recursive: true });
 
 const logger = winston.createLogger({
     level: 'info',

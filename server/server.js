@@ -20,7 +20,17 @@ app.use(express.json());
 app.use(
   morgan("combined", {
     stream: {
-      write: (message) => logger.info(message.trim()),
+      write: (message) => {
+        const statusCode = Number(message.match(/"\s(\d{3})\s/)?.[1]);
+
+        if (statusCode >= 500) {
+          logger.error(message.trim());
+        } else if (statusCode >= 400) {
+          logger.warn(message.trim());
+        } else {
+          logger.info(message.trim());
+        }
+      },
     },
   }),
 );
