@@ -20,24 +20,27 @@
   box-sizing: border-box;
 }
 
-body {
-  /* background-image: url('/web_wallpaper1.jpg');
-  background-repeat: repeat;
-  background-size: 450px; /* קובע כמה האיורים יהיו גדולים או קטנים */
-  /* background-attachment: fixed; שומר על הרקע במקום בזמן שגוללים */ 
-
-  background-image: url('/web_wallpaper1.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center top;
-  background-attachment: fixed;
-  background-color: var(--bg-cream);
-
+html, body {
   margin: 0;
-  font-family: 'Alef', system-ui, sans-serif;
-  background-color: var(--bg-cream);
-  color: var(--text-main);
+  padding: 0;
   direction: rtl;
+  text-align: right;
+  font-family: 'Alef', system-ui, sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-cream);
+  min-height: 100vh;
+}
+
+/* מחלקת עיצוב לבאנר העליון המשלבת את התמונה בעדינות עם מעבר צבעים רך לרקע הקרם */
+.hero-header {
+  background-image: 
+    linear-gradient(to bottom, rgba(251, 249, 245, 0.75) 0%, rgba(251, 249, 245, 0.95) 85%, var(--bg-cream) 100%),
+    url('/web_wallpaper1.jpg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  padding: 2.5rem 1.5rem 2rem;
+  border-bottom: 1px solid rgba(212, 148, 87, 0.2);
 }
 
 .font-title {

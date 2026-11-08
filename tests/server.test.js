@@ -3,6 +3,7 @@ const request = require("supertest");
 jest.mock("../server/prismaClient", () => ({
   product: {
     findMany: jest.fn(),
+    findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
   },
@@ -286,6 +287,14 @@ describe("Server tests", () => {
         },
       ],
     };
+    prisma.product.findFirst.mockResolvedValue({
+      id: "product-1",
+      name: "Test Product",
+      basePrice: 50,
+      minQuantity: null,
+      isActive: true,
+      options: [],
+    });
 
     const createdOrder = {
       id: "order-1",

@@ -1,4 +1,4 @@
-﻿THIRD-PARTY DEPENDENCIES AND LICENSES
+THIRD-PARTY DEPENDENCIES AND LICENSES
 =====================================
 
 This file lists the direct third-party dependencies used by the project,
@@ -9,7 +9,8 @@ CLIENT – Runtime Dependencies
 1. react (v19.3.1) - MIT
 2. react-dom (v19.3.1) - MIT
 3. react-router-dom (v7.18.4) - MIT
-4. lucide-react (v1.70.0) - ISC
+4. @tanstack/react-table (v8.x) - MIT (Used for Products Management Data Table)
+5. lucide-react (v1.70.0) - ISC
 
 CLIENT – Development Dependencies
 ----------------------------------
