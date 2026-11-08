@@ -81,9 +81,19 @@ export default function AdminDashboard({ isOpen, onClose }) {
     }
   };
 
-  const fetchProducts = async () => {
+  // const fetchProducts = async () => {
+  //   try {
+  //     const res = await fetch('http://localhost:5000/api/products');
+  //     if (res.ok) setProducts(await res.json());
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
+
+const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/products');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/products`);
       if (res.ok) setProducts(await res.json());
     } catch (e) {
       console.error(e);
