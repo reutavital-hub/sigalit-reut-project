@@ -1,47 +1,54 @@
+THIRD-PARTY DEPENDENCIES AND LICENSES
+=====================================
 
-THIRD-PARTY OPEN SOURCE LIBRARIES & LICENSES
+This file lists the direct third-party dependencies used by the project,
+including runtime and development dependencies.
 
+CLIENT – Runtime Dependencies
+-----------------------------
+1. react (v19.3.1) - MIT
+2. react-dom (v19.3.1) - MIT
+3. react-router-dom (v7.18.4) - MIT
+4. @tanstack/react-table (v8.x) - MIT (Used for Products Management Data Table)
+5. lucide-react (v1.70.0) - ISC
 
-Client Dependencies (client/package.json)
-1. react (v18.x) - MIT License
-   https://github.com/facebook/react
-2. react-dom (v18.x) - MIT License
-   https://github.com/facebook/react
-3. @tanstack/react-table (v8.x) - MIT License
-   (Used for Products Management Data Table)
-   https://github.com/TanStack/table
-4. lucide-react - ISC License
-   (Used for UI icons)
-   https://github.com/lucide-icons/lucide
-5. vite - MIT License
-   https://github.com/vitejs/vite
-6. @vitejs/plugin-react - MIT License
-   https://github.com/vitejs/vite-plugin-react
+CLIENT – Development Dependencies
+----------------------------------
+1. @eslint/js (v10.0.1) - MIT
+2. @types/react (v19.3.0) - MIT
+3. @types/react-dom (v19.3.0) - MIT
+4. @vitejs/plugin-react (v6.1.2) - MIT
+5. eslint (v10.13.0) - MIT
+6. eslint-plugin-react-hooks (v7.1.1) - MIT
+7. eslint-plugin-react-refresh (v0.5.7) - MIT
+8. globals (v17.13.0) - MIT
+9. vite (v8.3.4) - MIT
 
-Server Dependencies (server/package.json)
-1. express - MIT License
-   https://github.com/expressjs/express
-2. jsonwebtoken - MIT License
-   https://github.com/auth0/node-jsonwebtoken
-3. bcrypt / bcryptjs - MIT License
-   (Used for Admin password hashing)
-   https://github.com/kelektiv/node.bcrypt.js
-4. cors - MIT License
-   https://github.com/expressjs/cors
-5. dotenv - BSD-2-Clause License
-   https://github.com/motdotla/dotenv
-6. winston - MIT License
-   https://github.com/winstonjs/winston
-7. morgan - MIT License
-   https://github.com/expressjs/morgan
-8. jest - MIT License
-   https://github.com/jestjs/jest
-9. supertest - MIT License
-   https://github.com/ladjs/supertest
-10. nodemon - MIT License
-    https://github.com/remy/nodemon
+SERVER – Runtime Dependencies
+-----------------------------
+1. @prisma/client (v5.22.0) - Apache-2.0
+2. bcryptjs (v3.0.3) - BSD-3-Clause
+3. cors (v2.8.6) - MIT
+4. dotenv (v18.0.7) - BSD-2-Clause
+5. express (v5.3.0) - MIT
+6. express-rate-limit (v8.7.3) - MIT
+7. jsonwebtoken (v9.0.3) - MIT
+8. morgan (v1.12.1) - MIT
+9. winston (v3.19.0) - MIT
 
+SERVER – Development Dependencies
+---------------------------------
+1. jest (v30.5.2) - MIT
+2. nodemon (v3.1.14) - MIT
+3. prisma (v5.22.0) - Apache-2.0
+4. supertest (v7.3.1) - MIT
 
-NOTE ON LICENSES:
-All libraries listed above are open-source and free for commercial and 
-educational use under the permissive MIT, ISC, and BSD-2-Clause licenses.
+LICENSE INFORMATION
+-------------------
+The project uses third-party open-source libraries distributed under
+various licenses, including MIT, ISC, BSD-2-Clause, BSD-3-Clause,
+and Apache-2.0.
+
+Each third-party library remains subject to its own license terms.
+This file lists direct dependencies only and does not include all
+transitive dependencies.
