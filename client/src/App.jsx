@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import ProductModal from './components/ProductModal';
@@ -19,7 +20,8 @@ const CATEGORIES = [
   'מארזים מלוחים'
 ];
 
-export default function App() {
+// עמוד הבית הציבורי - נקי לחלוטין מכפתורי ניהול
+function StoreFront() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('הכל');
@@ -29,11 +31,8 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const menuRef = useRef(null);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
-    // fetch('http://localhost:5000/api/products')
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/products`)
       .then(res => {
         if (!res.ok) throw new Error('שגיאה בתקשורת עם השרת');
@@ -75,20 +74,6 @@ export default function App() {
     setCart(prev => prev.filter((_, i) => i !== index));
   };
 
-  // בדיקת טוקן בלחיצה על כפתור ניהול
-  const handleAdminButtonClick = () => {
-    const token = localStorage.getItem('adminToken');
-
-    if (token) {
-      // אם כבר קיים טוקן מאומת - פותח ישר את חלון הניהול
-      setIsAdminOpen(true);
-    } else {
-      // אם אין טוקן - פותח את חלון הסיסמה
-      setIsLoginModalOpen(true);
-    }
-  };
-
-  // דירוג עדיפות לקטגוריות בתצוגת "הכל"
   const CATEGORY_PRIORITY = {
     'מארזים מתוקים': 1,
     'מארזים מלוחים': 2,
@@ -447,7 +432,7 @@ export default function App() {
         }}
       />
 
-      {/* 6. פוטר */}
+      {/* 6. פוטר - הוסר כפתור הניהול */}
       <footer style={{
         backgroundColor: '#ffffff',
         borderTop: '1px solid var(--border-color)',
@@ -485,41 +470,50 @@ export default function App() {
               <MessageCircle size={20} />
               וואטסאפ
             </a>
-            
-            {/* כפתור הניהול המתוקן */}
-            <button
-              type="button"
-              onClick={handleAdminButtonClick}
-              style={{
-                background: 'none',
-                border: '1px dashed var(--border-color)',
-                borderRadius: '6px',
-                padding: '0.35rem 0.75rem',
-                fontSize: '0.8rem',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                fontFamily: 'inherit'
-              }}
-              title="כניסה לממשק בעלת העסק"
-            >
-              ניהול
-            </button>
           </div>
         </div>
       </footer>
-
-      {/* חלון התחברות מנהלת */}
-      <AdminLoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLoginSuccess={() => {
-          setIsLoginModalOpen(false);
-          setIsAdminOpen(true);
-        }}
-      />
-
-      {/* מודל הדשבורד של האדמין */}
-      <AdminDashboard isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </div>
+  );
+}
+
+// עמוד ניהול נפרד תחת הנתיב /admin
+function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
+  const navigate = useNavigate();
+
+  const handleCloseLogin = () => {
+    // מנווט לדף הראשי רק אם המשתמש לחץ על "ביטול" ועדיין לא התחבר
+    if (!localStorage.getItem('adminToken')) {
+      navigate('/');
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      {!isAuthenticated ? (
+        <AdminLoginModal
+          isOpen={true}
+          onClose={handleCloseLogin}
+          onLoginSuccess={() => setIsAuthenticated(true)}
+        />
+      ) : (
+        <AdminDashboard
+          isOpen={true}
+          onClose={() => navigate('/')}
+        />
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<StoreFront />} />
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
