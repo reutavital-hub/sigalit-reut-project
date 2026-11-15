@@ -432,6 +432,34 @@ function StoreFront() {
         }}
       />
 
+{/* כפתור סל קניות צף */}
+   {cart.length > 0 && (
+     <button
+       onClick={() => setIsCartOpen(true)}
+       style={{
+         position: 'fixed',
+         bottom: '24px',
+         left: '24px',
+         zIndex: 9999,
+         backgroundColor: 'var(--primary-teal, #1ea4a8)',
+         color: '#ffffff',
+         border: 'none',
+         borderRadius: '50px',
+         padding: '0.85rem 1.4rem',
+         fontSize: '1rem',
+         fontWeight: '700',
+         cursor: 'pointer',
+         display: 'flex',
+         alignItems: 'center',
+         gap: '0.6rem',
+         boxShadow: '0 6px 20px rgba(30, 164, 168, 0.4)'
+       }}
+     >
+       <ShoppingBag size={20} />
+       <span>לסיום הזמנה ({cart.reduce((sum, i) => sum + i.quantity, 0)}) • ₪{totalAmount}</span>
+     </button>
+   )}
+
       {/* 6. פוטר - הוסר כפתור הניהול */}
       <footer style={{
         backgroundColor: '#ffffff',
