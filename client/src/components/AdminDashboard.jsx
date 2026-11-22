@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Trash2, X, PlusCircle, DollarSign, LogOut } from 'lucide-react';
 import ProductsManagement from './ProductsManagement';
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://sigalit-reut-project.onrender.com';
+
 export default function AdminDashboard({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'dates' | 'products'
   const [orders, setOrders] = useState([]);
@@ -15,31 +17,30 @@ export default function AdminDashboard({ isOpen, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-const API_URL = import.meta.env.VITE_API_URL || 'https://sigalit-reut-project.onrender.com';
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoginError('');
-  try {
-    const res = await fetch(`${API_URL}/api/admin/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    if (res.ok && data.token) {
-      localStorage.setItem('adminToken', data.token);
-      setIsAuthenticated(true);
-      fetchOrders();
-      fetchBlockedDates();
-      fetchProducts();
-    } else {
-      setLoginError(data.error || 'שם משתמש או סיסמה שגויים');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch(`${API_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('adminToken', data.token);
+        setIsAuthenticated(true);
+        fetchOrders();
+        fetchBlockedDates();
+        fetchProducts();
+      } else {
+        setLoginError(data.error || 'שם משתמש או סיסמה שגויים');
+      }
+    } catch (err) {
+      setLoginError('שגיאת תקשורת עם השרת');
     }
-  } catch (err) {
-    setLoginError('שגיאת תקשורת עם השרת');
-  }
-};
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -75,27 +76,16 @@ const handleLogin = async (e) => {
 
   const fetchBlockedDates = async () => {
     try {
-      // const res = await fetch('http://localhost:5000/api/blocked-dates');
       const res = await fetch(`${API_URL}/api/blocked-dates`);
-       if (res.ok) setBlockedDates(await res.json());
-       } catch (e) {
-         console.error(e); } }; 
-      // ```  וודאי שגם בפונקציות שמוסיפות או מוחקות תאריכים חסומים (באותו קובץ) מופיע `${API_URL}` במקום `'
+      if (res.ok) setBlockedDates(await res.json());
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-
-  // const fetchProducts = async () => {
-  //   try {
-  //     const res = await fetch('http://localhost:5000/api/products');
-  //     if (res.ok) setProducts(await res.json());
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
-const fetchProducts = async () => {
+  const fetchProducts = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${apiUrl}/api/products`);
+      const res = await fetch(`${API_URL}/api/products`);
       if (res.ok) setProducts(await res.json());
     } catch (e) {
       console.error(e);
@@ -105,7 +95,7 @@ const fetchProducts = async () => {
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+      const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +117,7 @@ const fetchProducts = async () => {
     const cleanPhone = rawPhone.replace(/\D/g, '');
     const phoneWithCountry = cleanPhone.startsWith('0') ? '972' + cleanPhone.slice(1) : cleanPhone;
     
-    const text = customMessage || `היי ${ord.customerName}, ההזמנה שלך מוכנה! 🎂 מחכים לך באהבה.`;
+    const text = customMessage || `היי ${ord.customerName}, ההזמנה שלך מוכנה! מחכים לך באהבה.`;
     const encoded = encodeURIComponent(text);
     window.open(`https://wa.me/${phoneWithCountry}?text=${encoded}`, '_blank');
   };
@@ -170,7 +160,7 @@ const fetchProducts = async () => {
     if (!newDate) return;
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('http://localhost:5000/api/blocked-dates', {
+      const res = await fetch(`${API_URL}/api/blocked-dates`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,7 +181,7 @@ const fetchProducts = async () => {
   const handleDeleteBlockedDate = async (date) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://localhost:5000/api/blocked-dates/${date}`, {
+      const res = await fetch(`${API_URL}/api/blocked-dates/${date}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -337,7 +327,7 @@ const fetchProducts = async () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {activeOrders.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#94a3b8', padding: '2rem 0' }}>
-                  אין הזמנות פתוחות לטיפול כרגע 🎉
+                  אין הזמנות פתוחות לטיפול כרגע
                 </p>
               ) : (
                 activeOrders.map((ord) => {
