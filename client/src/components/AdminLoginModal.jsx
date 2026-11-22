@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +16,7 @@ export default function AdminLoginModal({ isOpen, onClose, onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/login', {
+      const response = await fetch(`${API_URL}/api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,16 +159,7 @@ const inputStyle = {
 };
 
 const submitButtonStyle = {
-//   backgroundColor: '#2e7d32',
-//   color: '#ffffff',
-//   padding: '10px',
-//   border: 'none',
-//   borderRadius: '8px',
-//   fontSize: '1rem',
-//   cursor: 'pointer',
-//   fontWeight: '600',
-//   marginTop: '8px',
-backgroundColor: 'var(--primary-teal, #1ea4a8)',
+  backgroundColor: 'var(--primary-teal, #1ea4a8)',
   color: '#ffffff',
   padding: '11px',
   border: 'none',

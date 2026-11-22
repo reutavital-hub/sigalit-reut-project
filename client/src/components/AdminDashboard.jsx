@@ -15,7 +15,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://sigalit-reut-project.onrender.com';
 
 const handleLogin = async (e) => {
   e.preventDefault();
