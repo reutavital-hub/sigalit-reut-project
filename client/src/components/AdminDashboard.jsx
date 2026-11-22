@@ -15,30 +15,31 @@ export default function AdminDashboard({ isOpen, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoginError('');
-    try {
-      const res = await fetch('http://localhost:5000/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem('adminToken', data.token);
-        setIsAuthenticated(true);
-        fetchOrders();
-        fetchBlockedDates();
-        fetchProducts();
-      } else {
-        setLoginError(data.error || 'שם משתמש או סיסמה שגויים');
-      }
-    } catch (err) {
-      setLoginError('שגיאת תקשורת עם השרת');
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoginError('');
+  try {
+    const res = await fetch(`${API_URL}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      localStorage.setItem('adminToken', data.token);
+      setIsAuthenticated(true);
+      fetchOrders();
+      fetchBlockedDates();
+      fetchProducts();
+    } else {
+      setLoginError(data.error || 'שם משתמש או סיסמה שגויים');
     }
-  };
+  } catch (err) {
+    setLoginError('שגיאת תקשורת עם השרת');
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -57,7 +58,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('http://localhost:5000/api/orders', {
+      const res = await fetch(`${API_URL}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -74,12 +75,13 @@ export default function AdminDashboard({ isOpen, onClose }) {
 
   const fetchBlockedDates = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/blocked-dates');
-      if (res.ok) setBlockedDates(await res.json());
-    } catch (e) {
-      console.error(e);
-    }
-  };
+      // const res = await fetch('http://localhost:5000/api/blocked-dates');
+      const res = await fetch(`${API_URL}/api/blocked-dates`);
+       if (res.ok) setBlockedDates(await res.json());
+       } catch (e) {
+         console.error(e); } }; 
+      // ```  וודאי שגם בפונקציות שמוסיפות או מוחקות תאריכים חסומים (באותו קובץ) מופיע `${API_URL}` במקום `'
+
 
   // const fetchProducts = async () => {
   //   try {
