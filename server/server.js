@@ -75,9 +75,11 @@ app.post("/api/products", verifyAdmin, async (req, res) => {
       category,
       description,
       image,
+      imageUrl,
       selectionType,
       minQuantity,
       basePrice,
+      price,
       options,
     } = req.body;
 
@@ -85,15 +87,24 @@ app.post("/api/products", verifyAdmin, async (req, res) => {
       return res.status(400).json({ error: "חסרים פרטי חובה למוצר" });
     }
 
+    const finalPrice =
+      basePrice !== undefined && basePrice !== null
+        ? Number(basePrice)
+        : price !== undefined && price !== null
+          ? Number(price)
+          : null;
+
+    const finalImage = image !== undefined ? image : imageUrl || null;
+
     const newProduct = await prisma.product.create({
       data: {
         name,
         category,
         description,
-        image,
+        image: finalImage,
         selectionType,
         minQuantity: minQuantity ? Number(minQuantity) : null,
-        basePrice: basePrice ? Number(basePrice) : null,
+        basePrice: finalPrice,
         options:
           options && options.length > 0
             ? {
@@ -116,6 +127,73 @@ app.post("/api/products", verifyAdmin, async (req, res) => {
       stack: error.stack,
     });
     res.status(500).json({ error: "שגיאה ביצירת מוצר חדש" });
+  }
+});
+
+// עדכון מוצר קיים - שם, קטגוריה, מחיר ותמונה (מוגן למנהלת בלבד)
+app.patch("/api/products/:id", verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, category, description, image, imageUrl, basePrice, price } =
+      req.body;
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      include: { options: true },
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({ error: "המוצר לא נמצא" });
+    }
+
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (category !== undefined) updateData.category = category;
+    if (description !== undefined) updateData.description = description;
+
+    if (image !== undefined) {
+      updateData.image = image;
+    } else if (imageUrl !== undefined) {
+      updateData.image = imageUrl;
+    }
+
+    const parsedPrice =
+      basePrice !== undefined && basePrice !== null && basePrice !== ""
+        ? Number(basePrice)
+        : price !== undefined && price !== null && price !== ""
+          ? Number(price)
+          : undefined;
+
+    if (parsedPrice !== undefined && Number.isFinite(parsedPrice)) {
+      // אם למוצר יש אופציות מחיר, נעדכן את האופציה; אחרת נעדכן את basePrice
+      if (existingProduct.options && existingProduct.options.length > 0) {
+        await prisma.productOption.update({
+          where: { id: existingProduct.options[0].id },
+          data: { price: parsedPrice },
+        });
+        if (existingProduct.basePrice !== null) {
+          updateData.basePrice = parsedPrice;
+        }
+      } else {
+        updateData.basePrice = parsedPrice;
+      }
+    }
+
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: updateData,
+      include: {
+        options: true,
+      },
+    });
+
+    res.json(updatedProduct);
+  } catch (error) {
+    logger.error("Error updating product", {
+      error: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({ error: "שגיאה בעדכון המוצר" });
   }
 });
 
@@ -211,7 +289,6 @@ const ALLOWED_ORDER_STATUSES = ["ממתין לאישור", "שולם", "מוכן
 
 // --- נתיבי הזמנות (Orders) ---
 
-
 // יצירת הזמנה חדשה על ידי לקוח (פתוח לכולם)
 app.post("/api/orders", async (req, res) => {
   try {
@@ -289,7 +366,7 @@ app.post("/api/orders", async (req, res) => {
 
       if (item.productOptionId) {
         const selectedOption = product.options.find(
-          (option) => option.id === item.productOptionId
+          (option) => option.id === item.productOptionId,
         );
 
         if (!selectedOption) {
@@ -337,7 +414,7 @@ app.post("/api/orders", async (req, res) => {
     // חישוב הסכום הכולל בצד השרת
     const calculatedTotal = verifiedItems.reduce(
       (sum, item) => sum + item.totalPrice,
-      0
+      0,
     );
 
     // יצירת ההזמנה עם המחירים המאומתים
@@ -387,7 +464,6 @@ app.post("/api/orders", async (req, res) => {
     });
   }
 });
-
 
 // קבלת כל ההזמנות (מוגן למנהלת בלבד)
 app.get("/api/orders", verifyAdmin, async (req, res) => {
@@ -440,7 +516,6 @@ app.patch("/api/orders/:id/status", verifyAdmin, async (req, res) => {
 });
 
 // הפעלת השרת
-
 if (require.main === module) {
   app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
