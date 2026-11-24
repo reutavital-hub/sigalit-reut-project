@@ -125,19 +125,18 @@ function StoreFront() {
       <section style={{
         backgroundColor: '#ffffff',
         borderBottom: '1px solid var(--border-color)',
-        padding: '3rem 1.5rem',
+        padding: '2.5rem 1.25rem',
       }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2.5rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '2rem',
           alignItems: 'center'
         }}>
           <div>
-            <h1 className="font-title" style={{
-              fontSize: '2.8rem',
+            <h1 className="font-title hero-title" style={{
               color: 'var(--primary-teal)',
               margin: '0 0 0.5rem 0',
               lineHeight: 1.1
@@ -145,7 +144,7 @@ function StoreFront() {
               רעות אביטל
             </h1>
             <h2 style={{
-              fontSize: '1.4rem',
+              fontSize: '1.3rem',
               fontWeight: '600',
               color: 'var(--accent-caramel)',
               margin: '0 0 1.2rem 0'
@@ -153,7 +152,7 @@ function StoreFront() {
               מתוק מלוח ומה שביניהם
             </h2>
             <p style={{
-              fontSize: '1.1rem',
+              fontSize: '1.05rem',
               lineHeight: '1.6',
               color: 'var(--dark-slate)',
               marginBottom: '1.8rem'
@@ -161,7 +160,7 @@ function StoreFront() {
               אפייה ביתית מוקפדת עם חומרי גלם מובחרים והמון תשומת לב לכל פרט. 
               כל המאפים, המארזים והקינוחים נאפים לפי הזמנה אישית ומגיעים אליכם הכי טריים שיש.
             </p>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <button
                 onClick={scrollToMenu}
                 style={{
@@ -169,8 +168,8 @@ function StoreFront() {
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '10px',
-                  padding: '0.85rem 1.75rem',
-                  fontSize: '1.05rem',
+                  padding: '0.8rem 1.5rem',
+                  fontSize: '1rem',
                   fontWeight: '700',
                   cursor: 'pointer',
                   display: 'flex',
@@ -191,8 +190,8 @@ function StoreFront() {
                   color: 'var(--primary-teal)',
                   border: '2px solid var(--primary-teal)',
                   borderRadius: '10px',
-                  padding: '0.85rem 1.5rem',
-                  fontSize: '1.05rem',
+                  padding: '0.8rem 1.35rem',
+                  fontSize: '1rem',
                   fontWeight: '700',
                   display: 'flex',
                   alignItems: 'center',
@@ -218,13 +217,13 @@ function StoreFront() {
             textAlign: 'center',
             boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
           }}>
-            <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <img 
                 src="/logo.png" 
                 alt="לוגו רעות אביטל" 
                 style={{ 
-                  width: '130px', 
-                  height: '130px', 
+                  width: '120px', 
+                  height: '120px', 
                   borderRadius: '50%', 
                   marginBottom: '1rem',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
@@ -242,19 +241,19 @@ function StoreFront() {
       </section>
 
       {/* 2. איך ההזמנה עובדת? */}
-      <section style={{ backgroundColor: 'var(--bg-cream)', padding: '2.5rem 1.5rem' }}>
+      <section style={{ backgroundColor: 'var(--bg-cream)', padding: '2.25rem 1.25rem' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h3 className="font-title" style={{ textAlign: 'center', fontSize: '1.8rem', color: 'var(--dark-slate)', marginBottom: '1.8rem' }}>
+          <h3 className="font-title" style={{ textAlign: 'center', fontSize: '1.65rem', color: 'var(--dark-slate)', marginBottom: '1.5rem' }}>
             איך ההזמנה עובדת?
           </h3>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.25rem'
+            gap: '1rem'
           }}>
             <div style={{
               backgroundColor: '#ffffff',
-              padding: '1.5rem',
+              padding: '1.25rem',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
               display: 'flex',
@@ -265,7 +264,7 @@ function StoreFront() {
                 <Clock size={24} />
               </div>
               <div>
-                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.1rem' }}>הזמנה מראש</h4>
+                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.05rem' }}>הזמנה מראש</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                   לפחות <strong>3 ימים מראש</strong>.<br />
                   הזמנות לסופ"ש נסגרות ביום <strong>רביעי ב-13:00</strong>.
@@ -275,7 +274,7 @@ function StoreFront() {
 
             <div style={{
               backgroundColor: '#ffffff',
-              padding: '1.5rem',
+              padding: '1.25rem',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
               display: 'flex',
@@ -286,7 +285,7 @@ function StoreFront() {
                 <MapPin size={24} />
               </div>
               <div>
-                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.1rem' }}>איסוף או משלוח</h4>
+                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.05rem' }}>איסוף או משלוח</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                   <strong>איסוף עצמי מלוד</strong> בתיאום שעה, או משלוח עד הבית לפי כתובת.
                 </p>
@@ -295,7 +294,7 @@ function StoreFront() {
 
             <div style={{
               backgroundColor: '#ffffff',
-              padding: '1.5rem',
+              padding: '1.25rem',
               borderRadius: '12px',
               border: '1px solid var(--border-color)',
               display: 'flex',
@@ -306,7 +305,7 @@ function StoreFront() {
                 <ShoppingBag size={24} />
               </div>
               <div>
-                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.1rem' }}>טריות מרבית</h4>
+                <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.05rem' }}>טריות מרבית</h4>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
                   כל פריט נאפה במועד המסירה כדי להבטיח איכות, ניחוח וטריות מקסימליים.
                 </p>
@@ -317,23 +316,17 @@ function StoreFront() {
       </section>
 
       {/* 3. תפריט */}
-      <main ref={menuRef} style={{ maxWidth: '1200px', width: '100%', margin: '0 auto', padding: '2.5rem 1.5rem', flexGrow: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <h2 className="font-title" style={{ fontSize: '2.2rem', color: 'var(--dark-slate)', margin: '0 0 0.5rem 0' }}>
+      <main ref={menuRef} className="menu-container">
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <h2 className="font-title" style={{ fontSize: '2rem', color: 'var(--dark-slate)', margin: '0 0 0.4rem 0' }}>
             התפריט שלנו
           </h2>
-          <p style={{ color: 'var(--text-muted)', margin: 0 }}>
+          <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.95rem' }}>
             בחרו קטגוריה לצפייה במאפים, בעוגות ובמארזים
           </p>
         </div>
 
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: '0.65rem',
-          marginBottom: '2.5rem'
-        }}>
+        <div className="categories-bar">
           {CATEGORIES.map(category => {
             const isActive = selectedCategory === category;
             return (
@@ -341,13 +334,13 @@ function StoreFront() {
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 style={{
-                  padding: '0.6rem 1.25rem',
+                  padding: '0.55rem 1.15rem',
                   borderRadius: '25px',
                   border: isActive ? '2px solid var(--primary-teal)' : '1px solid var(--border-color)',
                   backgroundColor: isActive ? 'var(--primary-teal)' : '#ffffff',
                   color: isActive ? '#ffffff' : 'var(--dark-slate)',
                   fontWeight: isActive ? '700' : '500',
-                  fontSize: '0.95rem',
+                  fontSize: '0.92rem',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                   boxShadow: isActive ? '0 2px 8px rgba(30,164,168,0.25)' : 'none'
@@ -382,11 +375,7 @@ function StoreFront() {
         )}
 
         {!loading && !error && filteredProducts.length > 0 && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '1.5rem'
-          }}>
+          <div className="products-grid">
             {filteredProducts.map(product => (
               <ProductCard
                 key={product.id}
@@ -432,39 +421,39 @@ function StoreFront() {
         }}
       />
 
-{/* כפתור סל קניות צף */}
-   {cart.length > 0 && (
-     <button
-       onClick={() => setIsCartOpen(true)}
-       style={{
-         position: 'fixed',
-         bottom: '24px',
-         left: '24px',
-         zIndex: 9999,
-         backgroundColor: 'var(--primary-teal, #1ea4a8)',
-         color: '#ffffff',
-         border: 'none',
-         borderRadius: '50px',
-         padding: '0.85rem 1.4rem',
-         fontSize: '1rem',
-         fontWeight: '700',
-         cursor: 'pointer',
-         display: 'flex',
-         alignItems: 'center',
-         gap: '0.6rem',
-         boxShadow: '0 6px 20px rgba(30, 164, 168, 0.4)'
-       }}
-     >
-       <ShoppingBag size={20} />
-       <span>לסיום הזמנה ({cart.reduce((sum, i) => sum + i.quantity, 0)}) • ₪{totalAmount}</span>
-     </button>
-   )}
+      {/* כפתור סל קניות צף */}
+      {cart.length > 0 && (
+        <button
+          onClick={() => setIsCartOpen(true)}
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            left: '20px',
+            zIndex: 9999,
+            backgroundColor: 'var(--primary-teal, #1ea4a8)',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '50px',
+            padding: '0.8rem 1.3rem',
+            fontSize: '0.95rem',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            boxShadow: '0 6px 20px rgba(30, 164, 168, 0.4)'
+          }}
+        >
+          <ShoppingBag size={20} />
+          <span>לסיום הזמנה ({cart.reduce((sum, i) => sum + i.quantity, 0)}) • ₪{totalAmount}</span>
+        </button>
+      )}
 
-      {/* 6. פוטר - הוסר כפתור הניהול */}
+      {/* 6. פוטר */}
       <footer style={{
         backgroundColor: '#ffffff',
         borderTop: '1px solid var(--border-color)',
-        padding: '2rem 1.5rem',
+        padding: '2rem 1.25rem',
         marginTop: '3rem'
       }}>
         <div style={{
@@ -511,7 +500,6 @@ function AdminPage() {
   const navigate = useNavigate();
 
   const handleCloseLogin = () => {
-    // מנווט לדף הראשי רק אם המשתמש לחץ על "ביטול" ועדיין לא התחבר
     if (!localStorage.getItem('adminToken')) {
       navigate('/');
     }

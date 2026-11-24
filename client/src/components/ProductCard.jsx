@@ -19,14 +19,16 @@ export default function ProductCard({ product, onSelectProduct }) {
       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
     }}>
       {/* תמונה */}
-      <div style={{
-        height: '240px',
-        backgroundColor: '#e5e7eb',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden'
-      }}>
+      <div 
+        className="product-card-img"
+        style={{
+          backgroundColor: '#e5e7eb',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        }}
+      >
         {product.image ? (
           <img 
             src={product.image} 
@@ -39,49 +41,44 @@ export default function ProductCard({ product, onSelectProduct }) {
       </div>
 
       {/* פרטי המוצר */}
-      <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+      <div className="product-card-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <span style={{
-          fontSize: '0.8rem',
+          fontSize: '0.78rem',
           color: 'var(--primary-teal)',
           fontWeight: '700',
           marginBottom: '0.25rem'
         }}>
           {product.category}
         </span>
-        <h3 className="font-title" style={{ margin: '0 0 0.5rem 0', fontSize: '1.25rem', color: 'var(--dark-slate)' }}>
+        <h3 className="font-title product-card-title" style={{ color: 'var(--dark-slate)' }}>
           {product.name}
         </h3>
         {product.description && (
-          <p style={{
-            fontSize: '0.95rem',
+          <p className="product-card-desc" style={{
             color: 'var(--text-muted)',
-            margin: '0 0 1rem 0',
             flexGrow: 1
           }}>
             {product.description}
           </p>
         )}
 
-        <div style={{
+        <div className="product-card-footer" style={{
           marginTop: 'auto',
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          paddingTop: '0.75rem',
           borderTop: '1px solid var(--border-color)'
         }}>
-          <span style={{ fontWeight: '700', fontSize: '1.1rem', color: 'var(--dark-slate)' }}>
+          <span style={{ fontWeight: '700', fontSize: '1.05rem', color: 'var(--dark-slate)' }}>
             {displayPrice}
           </span>
           <button
-            // onClick={() => onAddToCart(product)}
+            className="product-card-btn"
             onClick={() => onSelectProduct(product)}
             style={{
               backgroundColor: 'var(--primary-teal)',
               color: '#ffffff',
               border: 'none',
               borderRadius: '8px',
-              padding: '0.5rem 1rem',
               fontWeight: '700',
               fontFamily: 'inherit',
               cursor: 'pointer',
